@@ -4419,6 +4419,40 @@ body[data-mode="play"] .visual-deduction-toggle { display: inline-flex; align-it
   }
 }
 
+  
+
+    /* ===== v5 mobile clue selection patch ===== */
+    .story-text, .text-card, #storyText, #textCard {
+      -webkit-user-select: text;
+      user-select: text;
+      -webkit-touch-callout: default;
+    }
+
+    @media (hover: none), (pointer: coarse) {
+      .visual-clue-toolbar.is-visible {
+        position: fixed !important;
+        left: 50% !important;
+        right: auto !important;
+        top: auto !important;
+        bottom: max(18px, env(safe-area-inset-bottom)) !important;
+        transform: translateX(-50%) !important;
+        z-index: 99999 !important;
+        width: min(92vw, 360px);
+        justify-content: center;
+      }
+
+      .visual-clue-toolbar button {
+        min-height: 42px;
+      }
+
+      #visualClueToolbarHint {
+        max-width: 150px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+
   </style>
 
   <meta name="theme-color" content="#f4f1ea">
@@ -14995,6 +15029,93 @@ body[data-mode="play"] .visual-deduction-toggle { display: inline-flex; align-it
     ]
   }
 }
+  </script>
+
+
+  <script>
+    // ===== v5 修复：手机端长按选择文字后显示“加入卷宗/加入时间轴”工具条 =====
+    (function(){
+      const isMobileLike = () => (
+        (navigator.maxTouchPoints && navigator.maxTouchPoints > 0) ||
+        (window.matchMedia && window.matchMedia('(hover: none), (pointer: coarse)').matches)
+      );
+
+      let mobileSelectionGuardUntil = 0;
+      let lastTouchPoint = { x: Math.floor(window.innerWidth / 2), y: Math.floor(window.innerHeight * 0.7) };
+
+      function $(id){ return document.getElementById(id); }
+
+      function selectionText(){
+        const sel = window.getSelection && window.getSelection();
+        return sel ? sel.toString().trim() : '';
+      }
+
+      function selectionInStory(){
+        const sel = window.getSelection && window.getSelection();
+        if(!sel || sel.rangeCount === 0 || !sel.toString().trim()) return false;
+        const story = $('storyText');
+        const card = $('textCard');
+        const a = sel.anchorNode;
+        const f = sel.focusNode;
+        return Boolean(story?.contains(a) || story?.contains(f) || card?.contains(a) || card?.contains(f));
+      }
+
+      function showMobileToolbar(){
+        if(!isMobileLike()) return;
+        const text = selectionText();
+        const toolbar = $('visualClueToolbar');
+        if(!toolbar) return;
+
+        if(!text || text.length < 2 || !selectionInStory()) {
+          toolbar.classList.remove('is-visible');
+          toolbar.setAttribute('aria-hidden', 'true');
+          return;
+        }
+
+        if(window.visualDeduction && window.visualDeduction.state) {
+          window.visualDeduction.state.selectedText = text;
+        }
+
+        const hint = $('visualClueToolbarHint');
+        if(hint) hint.textContent = text.length > 18 ? text.slice(0, 18) + '…' : text;
+
+        toolbar.style.left = '50%';
+        toolbar.style.top = 'auto';
+        toolbar.style.bottom = 'max(18px, env(safe-area-inset-bottom))';
+        toolbar.style.transform = 'translateX(-50%)';
+        toolbar.classList.add('is-visible');
+        toolbar.setAttribute('aria-hidden', 'false');
+        mobileSelectionGuardUntil = Date.now() + 1800;
+      }
+
+      document.addEventListener('touchstart', ev => {
+        const t = ev.touches && ev.touches[0];
+        if(t) lastTouchPoint = { x: t.clientX, y: t.clientY };
+      }, { passive: true, capture: true });
+
+      document.addEventListener('touchend', () => {
+        // 移动端长按选中文字后，mouseup 不一定触发；延迟几次等待系统完成选区。
+        setTimeout(showMobileToolbar, 80);
+        setTimeout(showMobileToolbar, 260);
+        setTimeout(showMobileToolbar, 520);
+      }, { passive: true, capture: true });
+
+      document.addEventListener('selectionchange', () => {
+        if(!isMobileLike()) return;
+        if(selectionInStory()) {
+          mobileSelectionGuardUntil = Date.now() + 1800;
+          setTimeout(showMobileToolbar, 120);
+        }
+      });
+
+      document.addEventListener('click', ev => {
+        if(ev.target.closest('#visualClueToolbar,#visualDeductionDesk,#visualClueDetail')) return;
+        if((Date.now() < mobileSelectionGuardUntil || selectionInStory()) && ev.target.closest('#storyText,#textCard')) {
+          ev.preventDefault();
+          ev.stopImmediatePropagation();
+        }
+      }, true);
+    })();
   </script>
 
   <script>

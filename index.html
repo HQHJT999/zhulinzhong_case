@@ -4293,6 +4293,132 @@ body[data-mode="play"] .visual-deduction-toggle { display: inline-flex; align-it
       display: none !important;
     }
 
+
+
+/* ===== v4 布局修复：案板分区改为稳定纵向堆叠，避免展开后互相重叠 ===== */
+.visual-deduction-desk {
+  display: none;
+  grid-template-rows: auto minmax(0, 1fr) !important;
+}
+.visual-deduction-desk.is-visible {
+  display: grid !important;
+}
+.visual-desk-header {
+  position: relative !important;
+  top: auto !important;
+  z-index: 6 !important;
+  max-height: 34svh;
+  overflow: auto;
+}
+.visual-desk-body {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  grid-template-columns: none !important;
+  grid-auto-rows: auto !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  gap: 14px !important;
+  padding: 14px !important;
+}
+.visual-board-section {
+  display: grid !important;
+  grid-template-rows: auto minmax(0, auto) !important;
+  width: 100% !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  flex: 0 0 auto !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+.visual-board-section.is-hidden-focus {
+  display: none !important;
+}
+.visual-board-section.is-collapsed {
+  grid-template-rows: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+}
+.visual-board-section.is-collapsed .visual-section-content {
+  display: none !important;
+}
+.visual-section-content {
+  position: relative !important;
+  min-height: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+.visual-relations-section {
+  grid-row: auto !important;
+}
+.visual-graph-wrap {
+  min-height: 520px !important;
+  height: min(62svh, 620px) !important;
+  max-height: none !important;
+  overflow: hidden !important;
+}
+.visual-relation-controls,
+.visual-layer-tabs,
+.visual-public-evidence,
+.visual-entry-list,
+.visual-timeline-controls,
+.visual-achievement-list,
+.visual-clue-list,
+.visual-timeline-list {
+  position: relative !important;
+  z-index: 1 !important;
+}
+.visual-clue-list,
+.visual-achievement-list,
+.visual-timeline-list {
+  max-height: none !important;
+  overflow: visible !important;
+}
+.visual-timeline-canvas {
+  min-height: 420px !important;
+  overflow: auto !important;
+}
+.visual-desk-actions {
+  max-height: none !important;
+  overflow: visible !important;
+}
+@media (min-width: 1100px) {
+  .visual-desk-body {
+    display: grid !important;
+    grid-template-columns: minmax(420px, .95fr) minmax(420px, 1.05fr) !important;
+    grid-auto-flow: row dense !important;
+    align-items: start !important;
+  }
+  .visual-relations-section {
+    grid-row: span 2 !important;
+  }
+  .visual-board-section[data-section="clues"],
+  .visual-board-section[data-section="timeline"],
+  .visual-board-section[data-section="achievements"] {
+    min-height: 0 !important;
+  }
+  .visual-board-section:not(.visual-relations-section) .visual-section-content {
+    overflow: visible !important;
+  }
+}
+@media (max-width: 720px) {
+  .visual-desk-header {
+    max-height: 38svh;
+  }
+  .visual-desk-body {
+    padding: 10px !important;
+    gap: 10px !important;
+  }
+  .visual-graph-wrap {
+    height: 430px !important;
+    min-height: 430px !important;
+  }
+}
+
   </style>
 
   <meta name="theme-color" content="#f4f1ea">

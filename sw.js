@@ -1,4 +1,4 @@
-const CACHE_NAME = "zhulin-case-pwa-2-3-2-mobile-selection-fixed";
+const CACHE_NAME = "zhulin-case-pwa-2-3-3-mobile-choice-fixed";
 const APP_SHELL = [
   "./",
   "./index.html",

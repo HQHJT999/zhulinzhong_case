@@ -4453,6 +4453,100 @@ body[data-mode="play"] .visual-deduction-toggle { display: inline-flex; align-it
       }
     }
 
+  
+
+    /* ===== v6 mobile choices visibility fix: 让三选项在手机端完整可滚动 ===== */
+    @media (max-width: 720px), (hover: none) and (pointer: coarse) {
+      body[data-mode="play"] {
+        overflow: hidden !important;
+      }
+
+      body[data-mode="play"] .app-shell {
+        height: 100svh !important;
+        min-height: 100svh !important;
+        grid-template-rows: auto minmax(0, 1fr) auto !important;
+        overflow: hidden !important;
+      }
+
+      body[data-mode="play"] .reader {
+        align-items: start !important;
+        min-height: 0 !important;
+        height: 100% !important;
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        -webkit-overflow-scrolling: touch !important;
+        padding: 12px 14px 22px !important;
+      }
+
+      body[data-mode="play"] .page {
+        max-height: none !important;
+        min-height: 0 !important;
+        height: auto !important;
+        gap: 12px !important;
+        padding-bottom: 12px !important;
+      }
+
+      body[data-mode="play"] .chapter-name {
+        min-height: 14px !important;
+        font-size: 10px !important;
+        line-height: 1.35 !important;
+      }
+
+      body[data-mode="play"] .text-card {
+        min-height: 0 !important;
+        max-height: 42svh !important;
+        height: auto !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+      }
+
+      body[data-mode="play"] .speaker {
+        margin-bottom: 10px !important;
+      }
+
+      body[data-mode="play"] .story-text {
+        font-size: calc(18px * var(--story-font-scale)) !important;
+        line-height: 1.75 !important;
+        letter-spacing: .02em !important;
+      }
+
+      body[data-mode="play"] .continue-hint {
+        height: 12px !important;
+        font-size: 10px !important;
+      }
+
+      body[data-mode="play"] .choices {
+        display: grid !important;
+        gap: 8px !important;
+        max-height: none !important;
+        overflow: visible !important;
+        padding-bottom: 8px !important;
+      }
+
+      body[data-mode="play"] .choice-btn {
+        min-height: auto !important;
+        padding: 10px 13px !important;
+        border-radius: 14px !important;
+        font-size: 15px !important;
+        line-height: 1.45 !important;
+      }
+
+      body[data-mode="play"] .choice-btn::before {
+        width: 12px !important;
+        margin-right: 8px !important;
+      }
+
+      body[data-mode="play"] .topbar,
+      body[data-mode="play"] .bottombar {
+        padding-left: 12px !important;
+        padding-right: 12px !important;
+      }
+
+      body[data-mode="play"] .bottombar {
+        gap: 6px !important;
+      }
+    }
+
   </style>
 
   <meta name="theme-color" content="#f4f1ea">

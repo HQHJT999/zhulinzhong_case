@@ -4908,7 +4908,34 @@ body[data-mode="play"] .visual-deduction-toggle { display: inline-flex; align-it
       devRouteEndingList: document.getElementById("devRouteEndingList")
     };
 
-    document.body.append(el.recordPanel, el.launcherDeveloperPanel);
+    // ===== 发布版兼容：为已删除/隐藏的开发者元素提供空占位，防止旧逻辑读取 null.classList =====
+    const optionalUiFallbackKeys = [
+      "launcherDeveloperBtn", "launcherDeveloperPanel", "homeDeveloperBtn",
+      "devToggle", "devTools", "devCloseBtn", "devSummary", "devNodeSelect",
+      "devValInput", "devFlagsInput", "devVarsInput", "devApplyStateBtn",
+      "devJumpNodeBtn", "devRefreshBtn", "devForwardBtn", "devBackBtn",
+      "devSkipChoiceBtn", "devEndingList", "devChoiceList", "devEndingEntryList",
+      "devRouteEndingList"
+    ];
+
+    function createHiddenFallbackElement(key) {
+      const tag = key.endsWith("Btn") || key === "devToggle" ? "button" : (key === "devNodeSelect" ? "select" : (key === "devVarsInput" ? "textarea" : "div"));
+      const node = document.createElement(tag);
+      node.id = `fallback_${key}`;
+      node.className = "is-hidden";
+      node.hidden = true;
+      node.style.display = "none";
+      return node;
+    }
+
+    optionalUiFallbackKeys.forEach(key => {
+      if (!el[key]) {
+        el[key] = createHiddenFallbackElement(key);
+        document.body.appendChild(el[key]);
+      }
+    });
+
+    document.body.append(...[el.recordPanel, el.launcherDeveloperPanel].filter(Boolean));
 
     const EFFECT_DURATIONS = {
       shake: 560,
